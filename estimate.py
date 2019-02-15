@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import namedtuple
 
-
 Task = namedtuple("Task", ['min', 'likely', 'max'])
 
 
@@ -23,11 +22,13 @@ def pert(min, likely, max, scale=4.0):
         # Avoid divide-by-zero problems by setting a default alpha
         a = (scale / 2) + 1
     else:
-        a = ((mu - min) * (2 * likely - min - max)) / ((likely - mu) * (max - min))
+        a = ((mu - min) * (2 * likely - min - max)) / (
+            (likely - mu) * (max - min))
     b = (a * (max - mu)) / (mu - min)
 
     def pert_pdf_sampler(num_samples):
         return np.random.beta(a=a, b=b, size=num_samples) * (max - min) + min
+
     return pert_pdf_sampler
 
 
@@ -78,7 +79,9 @@ def generate_plots(sims, bins, filepath):
 
     # PDF
     axarr[0].hist(sims, bins=bins, cumulative=False, normed=False)
-    axarr[0].set(title='Monte Carlo Simulation Results ({} runs)'.format(num_sims), ylabel='Number of Simulations')
+    axarr[0].set(
+        title='Monte Carlo Simulation Results ({} runs)'.format(num_sims),
+        ylabel='Number of Simulations')
 
     # CDF
     axarr[1].hist(sims, bins=bins, cumulative=True, normed=True)
@@ -86,10 +89,25 @@ def generate_plots(sims, bins, filepath):
 
     # Confidence indicators
     for ax in axarr:
-        ax.axvline(x=conf_50, color='k', linestyle='--', label="50% quantile: {}".format(round(conf_50)))
-        ax.axvline(x=conf_90, color='r', linestyle=':', label="90% quantile: {}".format(round(conf_90)))
-        ax.axvline(x=conf_95, color='r', linestyle='--', label="95% quantile: {}".format(round(conf_95)))
-        ax.axvline(x=conf_99, color='r', label="99% quantile: {}".format(round(conf_99)))
+        ax.axvline(
+            x=conf_50,
+            color='k',
+            linestyle='--',
+            label="50% quantile: {}".format(round(conf_50)))
+        ax.axvline(
+            x=conf_90,
+            color='r',
+            linestyle=':',
+            label="90% quantile: {}".format(round(conf_90)))
+        ax.axvline(
+            x=conf_95,
+            color='r',
+            linestyle='--',
+            label="95% quantile: {}".format(round(conf_95)))
+        ax.axvline(
+            x=conf_99,
+            color='r',
+            label="99% quantile: {}".format(round(conf_99)))
 
     plt.legend()
     plt.savefig(fname=filepath)
@@ -103,8 +121,11 @@ def main():
     # e.g. Task(min=1, likely=4, max=12)
 
     task_list = [
-       # tasks here
-       Task(min=1, likely=4, max=12),
+        # tasks here
+        Task(min=1, likely=4, max=12),
+        Task(min=3, likely=5, max=8),
+        Task(min=8, likely=15, max=18),
+        Task(min=1, likely=2, max=8)
     ]
 
     sims = mc_estimate(num_samples=mc_simulations, tasks=task_list)
