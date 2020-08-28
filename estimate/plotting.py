@@ -32,7 +32,8 @@ def generate_plots(sims, bins, time_unit, filepath):
 
     # CDF
     axarr[1].hist(sims, bins=bins, cumulative=True, density=True)
-    axarr[1].set(xlabel=time_unit, ylabel='Probability of Finishing by Day X')
+    axarr[1].set(xlabel=time_unit,
+                 ylabel=f'Probability of Finishing within X {time_unit}')
 
     # Confidence indicators
     for ax in axarr:
